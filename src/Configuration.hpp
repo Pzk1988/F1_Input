@@ -30,7 +30,7 @@ public:
 	}
 
 private:
-	static const uint8_t ID = 1;
+	static const uint8_t ID = 3;
 	static const uint16_t inputAmount = 4;
 	static InputList inputs[inputAmount];
 };

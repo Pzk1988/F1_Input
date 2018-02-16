@@ -149,7 +149,7 @@ bool Can::DataFrame(uint16_t id, uint8_t* pData, uint8_t len)
 	canTxMsg.RTR = CAN_RTR_DATA;
 	canTxMsg.IDE = CAN_ID_STD;
 	canTxMsg.DLC = len;
-	memcpy(canTxMsg.Data, pData, 8);
+	memcpy(canTxMsg.Data, pData, len);
 	CAN_Transmit(CAN1, &canTxMsg);
 	return false;
 }

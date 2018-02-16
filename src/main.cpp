@@ -63,7 +63,7 @@ void ProcessCan(InputCard& inputCard)
 		if(RxMessage.RTR == CAN_RTR_Remote)
 		{
 			uint16_t input = inputCard.GetState();
-			can->DataFrame(0x03, (uint8_t*)&input, 2);
+			can->DataFrame(0x01, (uint8_t*)&input, 2);
 			printf("RTR id 0x%x, input 0x%x\r\n", RxMessage.StdId, inputCard.GetState());
 		}
 		else
