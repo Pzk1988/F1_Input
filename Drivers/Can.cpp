@@ -7,6 +7,11 @@
 namespace Driver
 {
 
+Can::Can(uint8_t ownId) : ownId(ownId)
+{
+
+}
+
 uint8_t Can::Init()
 {
 	uint8_t ret = 0;
@@ -114,7 +119,7 @@ uint8_t Can::Init(uint8_t filterId)
 
 	// Can filter, for now pass all frames
 	CAN_FilterInitTypeDef CAN_FilterInitStructure;
-	uint32_t filter_mask = 0x1fffffff;
+	uint32_t filter_mask = 0x0000001f;
 	CAN_FilterInitStructure.CAN_FilterNumber = 0;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
@@ -145,18 +150,24 @@ uint8_t Can::Init(uint8_t filterId)
 bool Can::DataFrame(uint16_t id, uint8_t* pData, uint8_t len)
 {
 	CanTxMsg canTxMsg;
-	canTxMsg.StdId = id;
+	canTxMsg.StdId = (ownId << 5) | id;
 	canTxMsg.RTR = CAN_RTR_DATA;
 	canTxMsg.IDE = CAN_ID_STD;
 	canTxMsg.DLC = len;
 	memcpy(canTxMsg.Data, pData, len);
 	CAN_Transmit(CAN1, &canTxMsg);
-	return false;
+	return true;
 }
 
 bool Can::RemoteFrame(uint16_t id)
 {
-	return false;
+	CanTxMsg canTxMsg;
+	canTxMsg.StdId = (ownId << 5) | id;
+	canTxMsg.RTR = CAN_RTR_REMOTE;
+	canTxMsg.IDE = CAN_ID_STD;
+	canTxMsg.DLC = 0;
+	CAN_Transmit(CAN1, &canTxMsg);
+	return true;
 }
 
 } // namespace Driver

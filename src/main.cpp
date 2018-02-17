@@ -29,7 +29,7 @@ int main(void)
 	serial->Init(115200);
 
 	// Can driver
-	can = new Driver::Can();
+	can = new Driver::Can(Configuration::GetId());
 	can->Init(Configuration::GetId());
 
 	// InputCard
@@ -64,7 +64,7 @@ void ProcessCan(InputCard& inputCard)
 		{
 			uint16_t input = inputCard.GetState();
 			can->DataFrame(0x01, (uint8_t*)&input, 2);
-			printf("RTR id 0x%x, input 0x%x\r\n", RxMessage.StdId, inputCard.GetState());
+			printf("RTR id 0x%x from 0x%x, input 0x%x\r\n", (RxMessage.StdId & 0x1f), (RxMessage.StdId >> 5), inputCard.GetState());
 		}
 		else
 		{
