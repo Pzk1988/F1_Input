@@ -4,7 +4,7 @@
 
 InputCard::InputCard() : cardState(0),
 						 prevCardState(0),
-						 stateChanged(false)
+						 stateChanged(true)
 {
 	for(size_t i = 0; i < Configuration::GetInputAmount(); i++)
 	{
