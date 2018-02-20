@@ -147,7 +147,7 @@ uint8_t Can::Init(uint8_t filterId)
 	return ret;
 }
 
-bool Can::DataFrame(uint16_t id, uint8_t* pData, uint8_t len)
+bool Can::SendDataFrame(uint16_t id, uint8_t* pData, uint8_t len)
 {
 	CanTxMsg canTxMsg;
 	canTxMsg.StdId = (ownId << 5) | id;
@@ -159,7 +159,7 @@ bool Can::DataFrame(uint16_t id, uint8_t* pData, uint8_t len)
 	return true;
 }
 
-bool Can::RemoteFrame(uint16_t id)
+bool Can::SendRemoteFrame(uint16_t id)
 {
 	CanTxMsg canTxMsg;
 	canTxMsg.StdId = (ownId << 5) | id;

@@ -1,9 +1,9 @@
+#include <ICommunication.hpp>
 #include <stddef.h>
 #include <stdio.h>
 #include "stm32f10x.h"
 #include "Serial.hpp"
 #include "Can.hpp"
-#include "ICan.hpp"
 #include <string.h>
 #include <vector>
 #include "InputCard.h"
@@ -14,7 +14,7 @@
 static void ProcessCan(InputCard& inputCard);
 
 Driver::ISerial* serial;
-Driver::ICan* can;
+Driver::ICommunication* commDriver;
 volatile uint8_t receivedSem = 0;
 volatile CanRxMsg RxMessage;
 uint16_t inputState = 0;
@@ -29,8 +29,8 @@ int main(void)
 	serial->Init(115200);
 
 	// Can driver
-	can = new Driver::Can(Configuration::GetId());
-	can->Init(Configuration::GetId());
+	commDriver = new Driver::Can(Configuration::GetId());
+	commDriver->Init(Configuration::GetId());
 
 	// InputCard
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -47,7 +47,7 @@ int main(void)
 		if(inputCard.StateChanged() == true)
 		{
 			uint16_t input = inputCard.GetState();
-			can->DataFrame(0x03, (uint8_t*)&input, 2);
+			commDriver->SendDataFrame(0x03, (uint8_t*)&input, 2);
 		}
 
 		// Process CAN transmission
@@ -63,7 +63,7 @@ void ProcessCan(InputCard& inputCard)
 		if(RxMessage.RTR == CAN_RTR_Remote)
 		{
 			uint16_t input = inputCard.GetState();
-			can->DataFrame(0x01, (uint8_t*)&input, 2);
+			commDriver->SendDataFrame(0x01, (uint8_t*)&input, 2);
 			printf("RTR id 0x%x from 0x%x, input 0x%x\r\n", (RxMessage.StdId & 0x1f), (RxMessage.StdId >> 5), inputCard.GetState());
 		}
 		else
